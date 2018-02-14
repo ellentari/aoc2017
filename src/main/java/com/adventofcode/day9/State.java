@@ -1,11 +1,11 @@
 package com.adventofcode.day9;
 
+import com.adventofcode.common.Pair;
+
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import javafx.util.Pair;
 
 class State {
 
@@ -28,8 +28,8 @@ class State {
 
     public Groups groupsInfo() {
         return new Groups(
-                (int) scores.stream().filter(p -> p.getKey() == Sequence.GROUP).count(),
-                scores.stream().filter(p -> p.getKey() == Sequence.GROUP).mapToInt(Pair::getValue).sum(),
+                (int) scores.stream().filter(p -> p.getLeft() == Sequence.GROUP).count(),
+                scores.stream().filter(p -> p.getLeft() == Sequence.GROUP).mapToInt(Pair::getRight).sum(),
                 lengths.getOrDefault(Sequence.GARBAGE, new Counter()).count);
     }
 
@@ -67,7 +67,7 @@ class State {
     }
 
     private Sequence getCurrentSequence() {
-        return stack.peek().getValue();
+        return stack.peek().getRight();
     }
 
     private Counter length(Sequence sequence) {

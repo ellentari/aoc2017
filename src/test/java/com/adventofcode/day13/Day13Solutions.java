@@ -7,6 +7,7 @@ import com.adventofcode.AdventOfCodePuzzleSolutions;
 import com.adventofcode.common.Resources;
 import com.adventofcode.day12.Day12;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class Day13Solutions extends AdventOfCodePuzzleSolutions<Integer, Integer
     }
 
     @Test
+    @Ignore("too long")
     public void partTwo() {
         assertPartTwo(Resources.lines(INPUT), 3861798);
     }

@@ -7,8 +7,6 @@ import com.adventofcode.AdventOfCodePuzzle;
 import java.util.Optional;
 import java.util.function.ToIntFunction;
 
-import javafx.util.Pair;
-
 /**
  * --- Day 2: Corruption Checksum ---
  *
@@ -114,7 +112,4 @@ public class Day2 implements AdventOfCodePuzzle<Integer, Integer> {
         return intResult == result ? Optional.of(intResult) : Optional.empty();
     }
 
-    private int[] toInts(String[] values) {
-        return stream(values).mapToInt(Integer::parseInt).toArray();
-    }
 }

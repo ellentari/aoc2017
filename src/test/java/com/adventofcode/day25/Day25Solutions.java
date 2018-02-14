@@ -6,6 +6,7 @@ import static java.util.Arrays.asList;
 import com.adventofcode.AdventOfCodePuzzle;
 import com.adventofcode.common.Resources;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -41,6 +42,7 @@ public class Day25Solutions {
     }
 
     @Test
+    @Ignore("too long")
     public void partOne() {
         assertPartOne(Resources.singleLine(INPUT), 12_173_597, 2870);
     }
