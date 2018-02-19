@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class Day7Solutions extends AdventOfCodePuzzleSolutions<String, String> {
+public class Day7Solutions extends AdventOfCodePuzzleSolutions<String, Integer> {
 
     private static final String INPUT = "day7.txt";
 
@@ -53,16 +53,16 @@ public class Day7Solutions extends AdventOfCodePuzzleSolutions<String, String> {
                 "jptl (61)",
                 "ugml (68) -> gyxo, ebii, jptl",
                 "gyxo (61)",
-                "cntj (57)"), "60");
+                "cntj (57)"), 60);
     }
 
     @Test
     public void partTwo() {
-        assertPartTwo(Resources.lines(INPUT), "420");
+        assertPartTwo(Resources.lines(INPUT), 420);
     }
 
     @Override
-    protected AdventOfCodePuzzle<String, String> puzzle(List<String> input) {
+    protected AdventOfCodePuzzle<String, Integer> puzzle(List<String> input) {
         return new Day7(input);
     }
 }
