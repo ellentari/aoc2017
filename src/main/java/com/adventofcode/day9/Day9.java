@@ -6,7 +6,7 @@ import static com.adventofcode.day9.Checks.within;
 import static com.adventofcode.day9.Commands.countSequenceCharacter;
 import static com.adventofcode.day9.Commands.endGarbage;
 import static com.adventofcode.day9.Commands.endGroup;
-import static com.adventofcode.day9.Commands.ignoreCharacter;
+import static com.adventofcode.day9.Commands.ignoreCharacterAndResetIgnore;
 import static com.adventofcode.day9.Commands.ignoreNextCharacter;
 import static com.adventofcode.day9.Commands.startNewGarbage;
 import static com.adventofcode.day9.Commands.startNewGroup;
@@ -118,7 +118,7 @@ class Day9 implements AdventOfCodePuzzle<Integer, Integer> {
 
     private GroupsStats groups() {
         StreamCharactersReader streamCharactersReader = streamReader()
-                .bind(onNextAfterIgnoreCharacter(), ignoreCharacter())
+                .bind(onNextAfterIgnoreCharacter(), ignoreCharacterAndResetIgnore())
                 .bind(onCharacter(IGNORE_CHAR), ignoreNextCharacter())
                 .bind(onCharacter(GARBAGE_END_CHAR).and(within(GARBAGE)), endGarbage())
                 .bind(within(GARBAGE), countSequenceCharacter())

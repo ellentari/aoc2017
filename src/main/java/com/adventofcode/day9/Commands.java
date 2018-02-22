@@ -9,7 +9,7 @@ class Commands {
 
     private Commands() { }
 
-    static Command ignoreCharacter() {
+    static Command ignoreCharacterAndResetIgnore() {
         return (state, character) -> state.resetIgnoreNext();
     }
 
