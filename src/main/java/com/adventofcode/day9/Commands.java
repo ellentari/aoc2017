@@ -1,56 +1,72 @@
 package com.adventofcode.day9;
 
+import com.adventofcode.day9.StreamCharactersReader.SequenceType;
+
+import static com.adventofcode.day9.StreamCharactersReader.SequenceType.GARBAGE;
+import static com.adventofcode.day9.StreamCharactersReader.SequenceType.GROUP;
+
 class Commands {
 
-    private Commands() {
+    private Commands() { }
 
-    }
-
-    static Command ignore() {
-        return (state, character) -> state.ignoreNext(false);
+    static Command ignoreCharacter() {
+        return (state, character) -> state.resetIgnoreNext();
     }
 
     static Command ignoreNextCharacter() {
-        return (state, character) -> state.ignoreNext(true);
-    }
-
-    private static Command startSequence(State.Sequence sequence) {
-        return (state, character) -> state.startSequence(character, sequence);
-    }
-
-    private static Command endSequence() {
-        return (state, character) -> state.pop();
-    }
-
-    private static Command incNesting() {
-        return (state, character) -> state.incNesting(State.Sequence.GROUP);
-    }
-
-    private static Command decNesting() {
-        return (state, character) -> state.decNesting(State.Sequence.GROUP);
+        return (state, character) -> state.ignoreNext();
     }
 
     static Command startNewGroup() {
-        return startSequence(State.Sequence.GROUP).andThen(incNesting());
+        return startSequence(GROUP)
+                .andThen(incNestingForGroup());
     }
 
     static Command startNewGarbage() {
-        return startSequence(State.Sequence.GARBAGE);
+        return startSequence(GARBAGE);
     }
 
     static Command endGroup() {
-        return endSequence().andThen(recordSequence(State.Sequence.GROUP).andThen(decNesting()));
+        return endCurrentSequence()
+                .andThen(recordSequence(GROUP))
+                .andThen(decNestingForGroup());
     }
 
     static Command endGarbage() {
-        return endSequence();
+        return endCurrentSequence();
     }
 
-    private static Command recordSequence(State.Sequence sequence) {
-        return (state, character) -> state.flush(sequence);
+    static Command countSequenceCharacter() {
+        return (state, character) -> state.incCurrentSequenceLength();
     }
 
-    static Command recordSequenceCharacter() {
-        return (state, character) -> state.incLength();
+    private static Command startSequence(SequenceType seqType) {
+        return (state, character) -> state.startSequence(seqType);
+    }
+
+    private static Command endCurrentSequence() {
+        return (state, character) -> state.endCurrentSequence();
+    }
+
+    private static Command incNestingForGroup() {
+        return (state, character) -> state.incNestingOf(GROUP);
+    }
+
+    private static Command decNestingForGroup() {
+        return (state, character) -> state.decNestingOf(GROUP);
+    }
+
+    private static Command recordSequence(SequenceType seqType) {
+        return (state, character) -> state.flush(seqType);
+    }
+
+    interface Command {
+
+        void execute(StreamCharactersReader.State state, char currentChar);
+
+        default Command andThen(Command command) {
+            return (state, character) -> { execute(state, character); command.execute(state, character); };
+        }
+
     }
 }

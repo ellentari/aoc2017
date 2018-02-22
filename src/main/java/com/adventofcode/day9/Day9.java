@@ -1,19 +1,19 @@
 package com.adventofcode.day9;
 
-import static com.adventofcode.day9.Checkers.isCharacter;
-import static com.adventofcode.day9.Checkers.isGarbage;
-import static com.adventofcode.day9.Checkers.isIgnored;
+import static com.adventofcode.day9.Checks.onCharacter;
+import static com.adventofcode.day9.Checks.onNextAfterIgnoreCharacter;
+import static com.adventofcode.day9.Checks.within;
+import static com.adventofcode.day9.Commands.countSequenceCharacter;
 import static com.adventofcode.day9.Commands.endGarbage;
 import static com.adventofcode.day9.Commands.endGroup;
-import static com.adventofcode.day9.Commands.ignore;
+import static com.adventofcode.day9.Commands.ignoreCharacter;
 import static com.adventofcode.day9.Commands.ignoreNextCharacter;
-import static com.adventofcode.day9.Commands.recordSequenceCharacter;
 import static com.adventofcode.day9.Commands.startNewGarbage;
 import static com.adventofcode.day9.Commands.startNewGroup;
+import static com.adventofcode.day9.StreamCharactersReader.SequenceType.GARBAGE;
+import static com.adventofcode.day9.StreamCharactersReader.streamReader;
 
 import com.adventofcode.AdventOfCodePuzzle;
-
-import java.util.LinkedList;
 
 /**
  * --- Day 9: Stream Processing ---
@@ -94,11 +94,11 @@ import java.util.LinkedList;
  */
 class Day9 implements AdventOfCodePuzzle<Integer, Integer> {
 
-    private static final char IGNORE = '!';
-    private static final char GROUP_START = '{';
-    private static final char GROUP_END = '}';
-    private static final char GARBAGE_START = '<';
-    private static final char GARBAGE_END = '>';
+    private static final char IGNORE_CHAR = '!';
+    private static final char GROUP_START_CHAR = '{';
+    private static final char GROUP_END_CHAR = '}';
+    private static final char GARBAGE_START_CHAR = '<';
+    private static final char GARBAGE_END_CHAR = '>';
 
     private final String stream;
 
@@ -108,7 +108,7 @@ class Day9 implements AdventOfCodePuzzle<Integer, Integer> {
 
     @Override
     public Integer solvePartOne() {
-        return groups().score;
+        return groups().groupsScore;
     }
 
     @Override
@@ -116,26 +116,23 @@ class Day9 implements AdventOfCodePuzzle<Integer, Integer> {
         return groups().garbageCount;
     }
 
-    public Groups groups() {
-        StreamReader streamReader = initStreamReader();
+    private GroupsStats groups() {
+        StreamCharactersReader streamCharactersReader = streamReader()
+                .bind(onNextAfterIgnoreCharacter(), ignoreCharacter())
+                .bind(onCharacter(IGNORE_CHAR), ignoreNextCharacter())
+                .bind(onCharacter(GARBAGE_END_CHAR).and(within(GARBAGE)), endGarbage())
+                .bind(within(GARBAGE), countSequenceCharacter())
+                .bind(onCharacter(GROUP_START_CHAR), startNewGroup())
+                .bind(onCharacter(GARBAGE_START_CHAR), startNewGarbage())
+                .bind(onCharacter(GROUP_END_CHAR), endGroup())
+                .build();
 
-        for (char character : stream.toCharArray()) {
-            streamReader.nextCharacter(character);
-        }
+        stream.chars()
+                .forEach(ch ->
+                        streamCharactersReader.accept((char) ch)
+                );
 
-        return streamReader.groupsInfo();
-    }
-
-    private StreamReader initStreamReader() {
-        StreamReader streamReader = new StreamReader();
-        streamReader.bind(isIgnored(), ignore());
-        streamReader.bind(isCharacter(IGNORE), ignoreNextCharacter());
-        streamReader.bind(isGarbage().and(isCharacter(GARBAGE_END)), endGarbage());
-        streamReader.bind(isGarbage(), recordSequenceCharacter());
-        streamReader.bind(isCharacter(GROUP_START), startNewGroup());
-        streamReader.bind(isCharacter(GARBAGE_START), startNewGarbage());
-        streamReader.bind(isCharacter(GROUP_END), endGroup());
-        return streamReader;
+        return streamCharactersReader.getGroupsStats();
     }
 
 }
